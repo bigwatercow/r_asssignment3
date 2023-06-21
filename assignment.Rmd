@@ -50,25 +50,12 @@ sum(is.na(data))
 
 ```
 ```{r}
-# Calculate the lower and upper bounds for outliers
-Q1 <- quantile(data$bmi, 0.25)
-Q3 <- quantile(data$bmi, 0.75)
-IQR <- Q3 - Q1
-lower_bound <- Q1 - 1.5 * IQR
-upper_bound <- Q3 + 1.5 * IQR
 
-# Identify the outliers
-outliers <- which(data$bmi < lower_bound | data$bmi > upper_bound)
 
-# Replace outliers with the mean value
-#median_val <- median(data$bmi)
-#data$bmi[outliers] <- 
+data$bmi[data$bmi %in% boxplot.stats(data$bmi)$out]  #identifying outliers in column
+data <- data[! data$bmi %in% boxplot.stats(data$bmi)$out, ] #removing outliers from all rows
+boxplot(data$bmi, horizontal=TRUE,main="BMI")
 
-data$bmi <- data$bmi[-outliers]
-
-boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
-
-head(outliers)
 
 ```
 
