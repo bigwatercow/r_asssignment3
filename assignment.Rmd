@@ -23,11 +23,19 @@ print("Summary of the dataframe: ")
 cat("\n")
 summary(data)
 ```
-Replacing NA values in BMI with median
+# Replacing NA values in BMI with median
 
 Why median ? 
 
-Replacing missing values with the median is a common approach when dealing with missing data in a numeric variable like BMI. The median is a robust measure of central tendency that is not affected by extreme values or outliers in the data. By using the median to fill in missing values, you can preserve the overall distribution and central tendency of the BMI variable
+Replacing missing values with the median because the distribution is left skewed.
+
+```{r}
+
+boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
+
+hist(data$bmi)
+
+```
 
 ```{r}
 data$bmi <- ifelse(is.na(data$bmi), median(data$bmi, na.rm=TRUE), data$bmi)
@@ -41,6 +49,40 @@ print("Number of N/A data in our data:")
 sum(is.na(data))
 
 ```
+```{r}
+# Calculate the lower and upper bounds for outliers
+Q1 <- quantile(data$bmi, 0.25)
+Q3 <- quantile(data$bmi, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# Identify the outliers
+outliers <- which(data$bmi < lower_bound | data$bmi > upper_bound)
+
+# Replace outliers with the mean value
+#median_val <- median(data$bmi)
+#data$bmi[outliers] <- 
+
+data$bmi <- data$bmi[-outliers]
+
+boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
+
+head(outliers)
+
+```
+
+
+
+```{r}
+
+
+boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
+
+hist(data$bmi)
+
+```
+
 ```{r}
 dim(data)# 5110 rows and 12 columns
 # trying to plot histogram
