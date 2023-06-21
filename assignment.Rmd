@@ -3,7 +3,72 @@
 ```{r}
 data <- read.csv('data/healthcare-dataset-stroke-data.csv')
 data
+```
+
+# Removing the missing values 
+```{r}
+# Checking if there is missing data in our data set
+#data[data == ""]  # Printing the missing data
+#data[data == ""] <- NA # replacing the missing data as NA
+#head(data)
+print("Structure of the data: ")
+
+str(data) # Checking the structure of the dataframe
+cat("\n")
+# After seeing the data structure, BMI was in character data type so we convert it into numeric (Double)
+data$bmi <- as.numeric(data$bmi)
+print("###########################################################################################################################")
+cat("\n")
+print("Summary of the dataframe: ")
+cat("\n")
+summary(data)
+```
+Replacing NA values in BMI with median
+
+Why median ? 
+
+Replacing missing values with the median is a common approach when dealing with missing data in a numeric variable like BMI. The median is a robust measure of central tendency that is not affected by extreme values or outliers in the data. By using the median to fill in missing values, you can preserve the overall distribution and central tendency of the BMI variable
+
+```{r}
+data$bmi <- ifelse(is.na(data$bmi), median(data$bmi, na.rm=TRUE), data$bmi)
+
+# Checking the summary of the data again
+print("Data Summary:")
+summary(data)
+cat("\n")
+cat("\n")
+print("Number of N/A data in our data:")
+sum(is.na(data))
+
+```
+```{r}
+dim(data)# 5110 rows and 12 columns
+# trying to plot histogram
+hist(data$age, xlab = "Age", main = "Distibution of Age", c=10)
+
+hist(data$avg_glucose_level, xlab = "Average Glucose Level", main = "Distibution of Average Glucose Levee", c=3)
+
+hist(data$bmi, xlab = "BMI", main = "Distibution of BMI", c=5)
 
 ```
 
+```{r}
+
+# Box plot of age by gender
+boxplot(age ~ gender, data = data, xlab = "Gender", ylab = "Age",
+        main = "Distribution of Age by Gender")
+
+# x axis shows gender
+# y axis shows the age
+
+
+# Box plot of avg_glucose_level by stroke
+boxplot(avg_glucose_level ~ stroke, data = data, xlab = "Stroke", ylab = "Average Glucose Level",
+        main = "Distribution of Average Glucose Level by Stroke")
+
+# Box plot of bmi by stroke
+boxplot(bmi ~ stroke, data = data, xlab = "Stroke", ylab = "BMI",
+        main = "Distribution of BMI by Stroke")
+
+```
 
