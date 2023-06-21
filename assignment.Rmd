@@ -60,15 +60,11 @@ upper_bound <- Q3 + 1.5 * IQR
 # Identify the outliers
 outliers <- which(data$bmi < lower_bound | data$bmi > upper_bound)
 
-# Replace outliers with the mean value
-#median_val <- median(data$bmi)
-#data$bmi[outliers] <- 
-
-data$bmi <- data$bmi[-outliers]
+# Replace outliers with the median value
+median_val <- median(data$bmi)
+data$bmi[outliers] <- median_val
 
 boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
-
-head(outliers)
 
 ```
 
