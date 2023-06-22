@@ -50,12 +50,21 @@ sum(is.na(data))
 
 ```
 ```{r}
+# Calculate the lower and upper bounds for outliers
+Q1 <- quantile(data$bmi, 0.25)
+Q3 <- quantile(data$bmi, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
 
+# Identify the outliers
+outliers <- which(data$bmi < lower_bound | data$bmi > upper_bound)
 
-data$bmi[data$bmi %in% boxplot.stats(data$bmi)$out]  #identifying outliers in column
-data <- data[! data$bmi %in% boxplot.stats(data$bmi)$out, ] #removing outliers from all rows
-boxplot(data$bmi, horizontal=TRUE,main="BMI")
+# Replace outliers with the median value
+median_val <- median(data$bmi)
+data$bmi[outliers] <- median_val
 
+boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
 
 ```
 
@@ -70,34 +79,68 @@ hist(data$bmi)
 
 ```
 
+
+# BOX PLOT
+
 ```{r}
-dim(data)# 5110 rows and 12 columns
-# trying to plot histogram
-hist(data$age, xlab = "Age", main = "Distibution of Age", c=10)
+# the variables and plot parameters being defined
+variables <- c("age", "avg_glucose_level", "bmi")
+xlabels <- c("Stroke", "Stroke", "Stroke")
+ylabels <- c("Age", "Average Glucose Level", "BMI")
+titles <- c("Distribution of Age by Stroke", "Distribution of Average Glucose Level by Stroke", "Distribution of BMI by Stroke")
+legend_loc <- c("bottom","topleft", "bottom")
+colors <- c("yellow", "orange")
 
-hist(data$avg_glucose_level, xlab = "Average Glucose Level", main = "Distibution of Average Glucose Levee", c=3)
+# for loop to plot the box plots
+for (i in 1:length(variables)) {
+  boxplot(formula(paste(variables[i], "~ stroke")), data = data,
+          xlab = xlabels[i], ylab = ylabels[i], main = titles[i],
+          horizontal = FALSE, col = colors)
+  
+  legend(legend_loc[i], legend = c("Stroke", "No stroke"), fill = colors)
+}
+```
 
-hist(data$bmi, xlab = "BMI", main = "Distibution of BMI", c=5)
+# HISTOGRAM 
+```{r}
+# Titles and labels for histograms
+titles <- c("Distribution of Age", "Distribution of Average Glucose Level", "Distribution of BMI")
+xlabels <- c("Age", "Average Glucose Level", "BMI")
+
+# Colors for histograms
+colors_histogram <- c(10, 3, 5)
+
+# Loop through the variables
+for (i in 1:length(variables)) {
+  # Plot histogram
+  hist(data[[variables[i]]], xlab = xlabels[i], main = titles[i], col = colors_histogram[i])
+}
+
 
 ```
 
+# Barplot
 ```{r}
+# Bar plot for Gender
+bar_color <- c("pink","blue", "purple")
+barplot(table(data$gender), xlab = "Gender", ylab = "Count", main = "Distribution of Gender", col= bar_color)
+```
+```{r}
+bar_color <- c("indianred","lightgreen")
+barplot(table(data$ever_married), xlab = "Ever married", ylab = "Count", main = "Distribution of Maried Status", col= bar_color)
+```
+```{r}
+bar_color <- c("lightcoral","lightsalmon","grey", "lightskyblue","mediumaquamarine")
+barplot(table(data$work_type), xlab = "Work Type", ylab = "Count", main = "Distribution of Work Type", col= bar_color)
+```
 
-# Box plot of age by gender
-boxplot(age ~ gender, data = data, xlab = "Gender", ylab = "Age",
-        main = "Distribution of Age by Gender")
+```{r}
+bar_color <- c("papayawhip","orchid")
+barplot(table(data$Residence_type), xlab = "Resident Type", ylab = "Count", main = "Distribution of Resident Type", col= bar_color)
+```
 
-# x axis shows gender
-# y axis shows the age
-
-
-# Box plot of avg_glucose_level by stroke
-boxplot(avg_glucose_level ~ stroke, data = data, xlab = "Stroke", ylab = "Average Glucose Level",
-        main = "Distribution of Average Glucose Level by Stroke")
-
-# Box plot of bmi by stroke
-boxplot(bmi ~ stroke, data = data, xlab = "Stroke", ylab = "BMI",
-        main = "Distribution of BMI by Stroke")
-
+```{r}
+bar_color <- c("turquoise","wheat","tomato","thistle")
+barplot(table(data$smoking_status), xlab = "Smoking Status", ylab = "Count", main = "Distribution of Smoking Status", col= bar_color)
 ```
 
