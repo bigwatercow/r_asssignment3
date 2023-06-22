@@ -69,6 +69,12 @@ boxplot(data$age, horizontal=TRUE,main="Boxplot of Age",col="limegreen")
 boxplot(data$avg_glucose_level, horizontal=TRUE,main="Boxplot of avg_glucose_level",col="darkmagenta")
 boxplot(data$bmi, horizontal=TRUE,main="Boxplot of bmi",col="darkcyan")
 ```
+# Histogram 
+```{r}
+hist(data$age,main="Distribution of Age",col="limegreen")
+hist(data$avg_glucose_level,main="Distribution of avg_glucose_level",col="darkmagenta")
+hist(data$bmi,main="Distribution of bmi",col="darkcyan")
+```
 Since our columns avg_glucose_level and bmi.
 
 ```{r}
@@ -95,58 +101,6 @@ for (i in 1:length(variables_replace)) {
 }
 
 ```
-
-
-```{r}
-# Calculate the lower and upper bounds for outliers
-Q1 <- quantile(data$bmi, 0.25)
-Q3 <- quantile(data$bmi, 0.75)
-IQR <- Q3 - Q1
-lower_bound <- Q1 - 1.5 * IQR
-upper_bound <- Q3 + 1.5 * IQR
-
-# Identify the outliers
-outliers <- which(data$bmi < lower_bound | data$bmi > upper_bound)
-
-# Replace outliers with the median value
-median_val <- median(data$bmi)
-data$bmi[outliers] <- median_val
-
-boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
-
-```
-```{r}
-# Calculate the lower and upper bounds for outliers
-Q1 <- quantile(data$avg_glucose_level, 0.25)
-Q3 <- quantile(data$avg_glucose_level, 0.75)
-IQR <- Q3 - Q1
-lower_bound <- Q1 - 1.5 * IQR
-upper_bound <- Q3 + 1.5 * IQR
-
-# Identify the outliers
-outliers <- which(data$avg_glucose_level < lower_bound | data$avg_glucose_level > upper_bound)
-
-# Replace outliers with the median value
-median_val <- median(data$avg_glucose_level)
-data$avg_glucose_level[outliers] <- median_val
-
-boxplot(data$avg_glucose_level, horizontal=TRUE, pch=20, main="avg_gul")
-```
-
-
-
-
-```{r}
-
-
-boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
-
-hist(data$bmi)
-
-```
-
-
-
 
 
 # Data Visualization
@@ -201,7 +155,6 @@ for (i in 1:length(variables)) {
 ```
 
 
-
 # HISTOGRAM 
 ```{r}
 # Titles and labels for histograms
@@ -217,6 +170,5 @@ for (i in 1:length(variables)) {
   hist(data[[variables[i]]], xlab = xlabels[i], main = titles[i], col = colors_histogram[i])
 }
 ```
-
 
 
