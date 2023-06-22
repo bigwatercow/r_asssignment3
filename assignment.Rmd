@@ -1,54 +1,102 @@
+# Assignment 3 - Stroke Prediction
 
-# loaded the data 
+# Loading the dataset the data 
 ```{r}
 data <- read.csv('data/healthcare-dataset-stroke-data.csv')
-data
+head(data)
 ```
 
-# Removing the missing values 
+
+# Data cleaning
+
+## Checking the dimension of the data 
+```{r}
+dim(data) # 5110 rows X 12 columns
+```
+
+
 ```{r}
 # Checking if there is missing data in our data set
-#data[data == ""]  # Printing the missing data
-#data[data == ""] <- NA # replacing the missing data as NA
-#head(data)
 print("Structure of the data: ")
-
 str(data) # Checking the structure of the dataframe
 cat("\n")
+```
+```{r}
 # After seeing the data structure, BMI was in character data type so we convert it into numeric (Double)
+# Converting the data type of bmi from chr to num
 data$bmi <- as.numeric(data$bmi)
-print("###########################################################################################################################")
 cat("\n")
 print("Summary of the dataframe: ")
-cat("\n")
 summary(data)
 ```
-# Replacing NA values in BMI with median
+We found that there are 201 NA for BMI
 
-Why median ? 
+# Replacing NA values in BMI.
 
-Replacing missing values with the median because the distribution is left skewed.
 
 ```{r}
 
-boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
-
-hist(data$bmi)
+boxplot(data$bmi, horizontal=TRUE,main="Boxplot of BMI",col="darkcyan")
+hist(data$bmi,main="Distrbution of BMI", col="darkcyan", xlab = "BMI", ylab = "Count")
 
 ```
-
+Replacing missing values with the median because the distribution is left skewed.
 ```{r}
+# replacing the NA values in the dataset with the median
 data$bmi <- ifelse(is.na(data$bmi), median(data$bmi, na.rm=TRUE), data$bmi)
 
 # Checking the summary of the data again
 print("Data Summary:")
 summary(data)
 cat("\n")
-cat("\n")
-print("Number of N/A data in our data:")
-sum(is.na(data))
 
 ```
+```{r}
+cat("\n")
+print("Number of N/A data in our data:")
+sum(is.na(data)) # sum of all na in our dataset
+```
+# Handeling the outliers 
+## Ploting the box plot to see the outliers.
+```{r}
+# Seeing the structure of our dataframe to find outliers
+str(data)
+```
+## Box plot to visualize the outliers
+
+```{r}
+boxplot(data$age, horizontal=TRUE,main="Boxplot of Age",col="limegreen")
+boxplot(data$avg_glucose_level, horizontal=TRUE,main="Boxplot of avg_glucose_level",col="darkmagenta")
+boxplot(data$bmi, horizontal=TRUE,main="Boxplot of bmi",col="darkcyan")
+```
+Since our columns avg_glucose_level and bmi.
+
+```{r}
+variables_replace <- c("avg_glucose_level", "bmi")
+colors_replace <- c("darkmagenta", "darkcyan")
+# for loop to plot the box plots
+for (i in 1:length(variables_replace)) {
+  # Calculate the lower and upper bounds for outliers
+  Q1 <- quantile(data[[variables_replace[i]]], 0.25)
+  Q3 <- quantile(data[[variables_replace[i]]], 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  
+  # Identify the outliers
+  outliers <- which(data[[variables_replace[i]]] < lower_bound | data[[variables_replace[i]]] > upper_bound)
+  
+  # Replace outliers with the median value
+  median_val <- median(data[[variables_replace[i]]])
+  data[[variables_replace[i]]][outliers] <- median_val
+  
+  boxplot(data[[variables_replace[i]]], horizontal=TRUE, main=variables_replace[i], col=colors_replace[i], pch = 20)
+  
+}
+
+```
+
+
 ```{r}
 # Calculate the lower and upper bounds for outliers
 Q1 <- quantile(data$bmi, 0.25)
@@ -67,6 +115,24 @@ data$bmi[outliers] <- median_val
 boxplot(data$bmi, horizontal=TRUE, pch=20, main="BMI")
 
 ```
+```{r}
+# Calculate the lower and upper bounds for outliers
+Q1 <- quantile(data$avg_glucose_level, 0.25)
+Q3 <- quantile(data$avg_glucose_level, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# Identify the outliers
+outliers <- which(data$avg_glucose_level < lower_bound | data$avg_glucose_level > upper_bound)
+
+# Replace outliers with the median value
+median_val <- median(data$avg_glucose_level)
+data$avg_glucose_level[outliers] <- median_val
+
+boxplot(data$avg_glucose_level, horizontal=TRUE, pch=20, main="avg_gul")
+```
+
 
 
 
@@ -79,6 +145,39 @@ hist(data$bmi)
 
 ```
 
+
+
+
+
+# Data Visualization
+
+
+# Barplot
+## Gender
+```{r}
+# Bar plot for Gender
+bar_color <- c("pink","blue", "purple")
+barplot(table(data$gender), xlab = "Gender", ylab = "Count", main = "Distribution of Gender", col= bar_color)
+```
+
+## Married Status
+```{r}
+bar_color <- c("indianred","lightgreen")
+barplot(table(data$ever_married), xlab = "Ever married", ylab = "Count", main = "Distribution of Maried Status", col= bar_color)
+```
+
+## Resident Type
+```{r}
+bar_color <- c("papayawhip","orchid")
+barplot(table(data$Residence_type), xlab = "Resident Type", ylab = "Count", main = "Distribution of Resident Type", col= bar_color)
+```
+
+## Smoking status
+
+```{r}
+bar_color <- c("turquoise","wheat","tomato","thistle")
+barplot(table(data$smoking_status), xlab = "Smoking Status", ylab = "Count", main = "Distribution of Smoking Status", col= bar_color)
+```
 
 # BOX PLOT
 
@@ -101,6 +200,8 @@ for (i in 1:length(variables)) {
 }
 ```
 
+
+
 # HISTOGRAM 
 ```{r}
 # Titles and labels for histograms
@@ -115,32 +216,7 @@ for (i in 1:length(variables)) {
   # Plot histogram
   hist(data[[variables[i]]], xlab = xlabels[i], main = titles[i], col = colors_histogram[i])
 }
-
-
 ```
 
-# Barplot
-```{r}
-# Bar plot for Gender
-bar_color <- c("pink","blue", "purple")
-barplot(table(data$gender), xlab = "Gender", ylab = "Count", main = "Distribution of Gender", col= bar_color)
-```
-```{r}
-bar_color <- c("indianred","lightgreen")
-barplot(table(data$ever_married), xlab = "Ever married", ylab = "Count", main = "Distribution of Maried Status", col= bar_color)
-```
-```{r}
-bar_color <- c("lightcoral","lightsalmon","grey", "lightskyblue","mediumaquamarine")
-barplot(table(data$work_type), xlab = "Work Type", ylab = "Count", main = "Distribution of Work Type", col= bar_color)
-```
 
-```{r}
-bar_color <- c("papayawhip","orchid")
-barplot(table(data$Residence_type), xlab = "Resident Type", ylab = "Count", main = "Distribution of Resident Type", col= bar_color)
-```
-
-```{r}
-bar_color <- c("turquoise","wheat","tomato","thistle")
-barplot(table(data$smoking_status), xlab = "Smoking Status", ylab = "Count", main = "Distribution of Smoking Status", col= bar_color)
-```
 
